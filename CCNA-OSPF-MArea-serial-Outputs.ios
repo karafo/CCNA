@@ -1,0 +1,178 @@
+! Router R1
+R1#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+      D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+      N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+      E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+      i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+      P - periodic downloaded static route
+
+   Gateway of last resort is not set
+
+   10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks
+      C       10.0.0.0/24 is directly connected, GigabitEthernet0/0.2
+      L       10.0.0.254/32 is directly connected, GigabitEthernet0/0.2
+      C       10.0.1.0/24 is directly connected, GigabitEthernet0/0.3
+      L       10.0.1.254/32 is directly connected, GigabitEthernet0/0.3
+      C       10.10.0.0/29 is directly connected, Loopback0
+      L       10.10.0.1/32 is directly connected, Loopback0
+      O IA    10.10.0.3/32 [110/3] via 192.168.1.2, 00:00:19, GigabitEthernet0/1
+   172.16.0.0/24 is subnetted, 2 subnets
+      O IA    172.16.1.0/24 [110/3] via 192.168.1.2, 00:00:19, GigabitEthernet0/1
+      O IA    172.16.2.0/24 [110/3] via 192.168.1.2, 00:00:19, GigabitEthernet0/1
+   192.168.1.0/24 is variably subnetted, 4 subnets, 2 masks
+      C       192.168.1.0/30 is directly connected, GigabitEthernet0/1
+      L       192.168.1.1/32 is directly connected, GigabitEthernet0/1
+      O IA    192.168.1.4/30 [110/2] via 192.168.1.2, 00:00:19, GigabitEthernet0/1
+      O IA    192.168.1.8/30 [110/3] via 192.168.1.2, 00:00:19, GigabitEthernet0/1
+! --------------------------------------------------------------------------------
+R1#show ip route ospf
+   10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks
+      O IA    10.10.0.3 [110/3] via 192.168.1.2, 00:02:25, GigabitEthernet0/1
+   172.16.0.0/24 is subnetted, 3 subnets
+      O IA    172.16.1.0 [110/3] via 192.168.1.2, 00:02:25, GigabitEthernet0/1
+      O IA    172.16.2.0 [110/3] via 192.168.1.2, 00:02:25, GigabitEthernet0/1
+      O IA    172.16.3.0 [110/4] via 192.168.1.2, 00:01:58, GigabitEthernet0/1
+   192.168.1.0/24 is variably subnetted, 4 subnets, 2 masks
+      O IA    192.168.1.4 [110/2] via 192.168.1.2, 00:02:25, GigabitEthernet0/1
+      O IA    192.168.1.8 [110/3] via 192.168.1.2, 00:02:25, GigabitEthernet0/1
+! --------------------------------------------------------------------------------
+R1#show ip ospf database
+            OSPF Router with ID (1.1.1.1) (Process ID 1)
+
+               Router Link States (Area 0)
+
+   Link ID         ADV Router      Age         Seq#       Checksum Link count
+   10.10.0.1       10.10.0.1       808         0x80000001 0x00e52f 1
+   1.1.1.1         1.1.1.1         750         0x80000005 0x008a89 4
+   1.1.1.2         1.1.1.2         750         0x80000003 0x008fdf 1
+
+               Net Link States (Area 0)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.2     1.1.1.2         750         0x80000001 0x009be1
+
+               Summary Net Link States (Area 0)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.4     1.1.1.2         723         0x80000001 0x007875
+   10.10.0.3       1.1.1.2         723         0x80000002 0x005ee1
+   172.16.1.0      1.1.1.2         723         0x80000003 0x00e4b3
+   172.16.2.0      1.1.1.2         723         0x80000004 0x00d7be
+   192.168.1.8     1.1.1.2         723         0x80000005 0x005292
+   172.16.3.0      1.1.1.2         697         0x80000006 0x00d2bf
+! --------------------------------------------------------------------------------
+R1#show ip ospf border-routers
+   OSPF Process 1 internal Routing Table
+
+   Codes: i - Intra-area route, I - Inter-area route
+
+   i 1.1.1.2 [1] via 192.168.1.2, GigabitEthernet0/1, ABR, Area 0, SPF 1
+! --------------------------------------------------------------------------------
+! --------------------------------------------------------------------------------
+! --------------------------------------------------------------------------------
+! --------------------------------------------------------------------------------
+! Switch SWML1
+SWML1#show ip route
+    Codes: C - connected, S - static, I - IGRP, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+    Gateway of last resort is not set
+
+     10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+        O       10.0.0.0/24 [110/2] via 192.168.1.1, 00:17:37, GigabitEthernet0/1
+        O       10.0.1.0/24 [110/2] via 192.168.1.1, 00:17:37, GigabitEthernet0/1
+        O       10.10.0.1/32 [110/2] via 192.168.1.1, 00:17:37, GigabitEthernet0/1
+        O       10.10.0.3/32 [110/2] via 192.168.1.6, 00:17:15, GigabitEthernet0/2
+     172.16.0.0/24 is subnetted, 3 subnets
+        O       172.16.1.0 [110/2] via 192.168.1.6, 00:17:15, GigabitEthernet0/2
+        O       172.16.2.0 [110/2] via 192.168.1.6, 00:17:15, GigabitEthernet0/2
+        O       172.16.3.0 [110/3] via 192.168.1.6, 00:16:48, GigabitEthernet0/2
+     192.168.1.0/30 is subnetted, 3 subnets
+        C       192.168.1.0 is directly connected, GigabitEthernet0/1
+        C       192.168.1.4 is directly connected, GigabitEthernet0/2
+        O       192.168.1.8 [110/2] via 192.168.1.6, 00:16:58, GigabitEthernet0/2
+! --------------------------------------------------------------------------------
+SWML1#show ip route ospf
+      10.0.0.0/8 is variably subnetted, 4 subnets, 2 masks
+         O       10.0.0.0 [110/2] via 192.168.1.1, 00:18:21, GigabitEthernet0/1
+         O       10.0.1.0 [110/2] via 192.168.1.1, 00:18:21, GigabitEthernet0/1
+         O       10.10.0.1 [110/2] via 192.168.1.1, 00:18:21, GigabitEthernet0/1
+         O       10.10.0.3 [110/2] via 192.168.1.6, 00:17:59, GigabitEthernet0/2
+      172.16.0.0/24 is subnetted, 3 subnets
+         O       172.16.1.0 [110/2] via 192.168.1.6, 00:17:59, GigabitEthernet0/2
+         O       172.16.2.0 [110/2] via 192.168.1.6, 00:17:59, GigabitEthernet0/2
+         O       172.16.3.0 [110/3] via 192.168.1.6, 00:17:32, GigabitEthernet0/2
+      192.168.1.0/30 is subnetted, 3 subnets
+         O       192.168.1.8 [110/2] via 192.168.1.6, 00:17:42, GigabitEthernet0/2
+! --------------------------------------------------------------------------------
+SWML1#show ip ospf database
+            OSPF Router with ID (1.1.1.2) (Process ID 1)
+
+               Router Link States (Area 0)
+
+   Link ID         ADV Router      Age         Seq#       Checksum Link count
+   10.10.0.1       10.10.0.1       1267        0x80000001 0x00e52f 1
+   1.1.1.2         1.1.1.2         1209        0x80000003 0x008fdf 1
+   1.1.1.1         1.1.1.1         1209        0x80000005 0x008a89 4
+
+               Net Link States (Area 0)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.2     1.1.1.2         1209        0x80000001 0x009be1
+
+               Summary Net Link States (Area 0)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.4     1.1.1.2         1182        0x80000001 0x007875
+   10.10.0.3       1.1.1.2         1182        0x80000002 0x005ee1
+   172.16.1.0      1.1.1.2         1182        0x80000003 0x00e4b3
+   172.16.2.0      1.1.1.2         1182        0x80000004 0x00d7be
+   192.168.1.8     1.1.1.2         1182        0x80000005 0x005292
+   172.16.3.0      1.1.1.2         1156        0x80000006 0x00d2bf
+
+               Router Link States (Area 1)
+
+   Link ID         ADV Router      Age         Seq#       Checksum Link count
+   10.10.0.3       10.10.0.3       1231        0x80000001 0x00d935 1
+   1.1.1.2         1.1.1.2         1187        0x80000002 0x00e385 1
+   1.1.1.3         1.1.1.3         1171        0x80000008 0x009e04 5
+   1.1.1.4         1.1.1.4         1171        0x80000004 0x003a28 3
+
+               Net Link States (Area 1)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.6     1.1.1.3         1187        0x80000001 0x00b2be
+   192.168.1.10    1.1.1.4         1171        0x80000001 0x000f53
+
+               Summary Net Link States (Area 1)
+   Link ID         ADV Router      Age         Seq#       Checksum
+   192.168.1.0     1.1.1.2         1182        0x80000001 0x00a150
+   10.10.0.1       1.1.1.2         1182        0x80000002 0x0072cf
+   10.0.0.0        1.1.1.2         1182        0x80000003 0x00f259
+   10.0.1.0        1.1.1.2         1182        0x80000004 0x00e564
+! --------------------------------------------------------------------------------
+SWML1#show ip ospf neigh det
+   Neighbor 1.1.1.1, interface address 192.168.1.1
+      In the area 0 via interface GigabitEthernet0/1
+      Neighbor priority is 1, State is FULL, 6 state changes
+      DR is 192.168.1.2 BDR is 192.168.1.1
+      Options is 0x00
+      Dead timer due in 00:00:31
+      Neighbor is up for 00:22:59
+      Index 1/1, retransmission queue length 0, number of retransmission 0
+      First 0x0(0)/0x0(0) Next 0x0(0)/0x0(0)
+      Last retransmission scan length is 0, maximum is 0
+      Last retransmission scan time is 0 msec, maximum is 0 msec
+   Neighbor 1.1.1.3, interface address 192.168.1.6
+      In the area 1 via interface GigabitEthernet0/2
+      Neighbor priority is 1, State is FULL, 6 state changes
+      DR is 192.168.1.6 BDR is 192.168.1.5
+      Options is 0x00
+      Dead timer due in 00:00:37
+      Neighbor is up for 00:22:43
+      Index 2/2, retransmission queue length 0, number of retransmission 0
+      First 0x0(0)/0x0(0) Next 0x0(0)/0x0(0)
+      Last retransmission scan length is 0, maximum is 0
+      Last retransmission scan time is 0 msec, maximum is 0 msec
