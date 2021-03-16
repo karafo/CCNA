@@ -11,7 +11,7 @@
 !
 ! R04   g0/0 = 192.168.0.252 255.255.255.0
 !       g0/1 = 192.186.10.9  255.255.255.252
-!
+! .
 ! ISP-Router configuration
 enable
     configure terminal
