@@ -1,0 +1,188 @@
+! Aufgabe 1
+! Loopback-Netzwerk 10.10.0.0 / 255.255.255.248
+!
+! Router R1
+enable
+    configure terminal
+        host R1
+        interface loopback 0
+            ip address 10.10.0.1 255.255.255.248
+            ip ospf 1 area 0
+        router ospf 1
+            router-id 1.1.1.1
+            passive-interface g0/0
+            passive-interface g0/2
+        interface g0/1
+            ip address 192.168.1.1 255.255.255.252
+            ip ospf 1 area 0
+            no shutdown
+        interface g0/0.2
+            encapsulation dot1q 2
+            ip address 10.0.0.254 255.255.255.0
+            ip ospf 1 area 0
+        interface g0/0.3
+            encapsulation dot1q 3
+            ip address 10.0.1.254 255.255.255.0
+            ip ospf 1 area 0
+        interface g0/0
+            no shutdown
+        end
+write
+!
+!--------------------------------------------------------------------
+!
+! Multilayer-Switch SWML1
+enable
+    configure terminal
+        hostname SWML1
+        ip routing
+        interface loopback 0
+            ip address 10.10..0.2 255.255.255.248
+            ip ospf 1 area 0
+        router ospf 1
+            router-id 1.1.1.2
+            passive-interface default
+            no passive-interface g0/1
+            no passive-interface g0/2
+        interface g0/1
+            no switchport
+            ip address 192.168.1.2 255.255.255.252
+            ip ospf 1 area 0
+        interface g0/2
+            no switchport
+            ip address 192.168.1.5 255.255.255.252
+            ip ospf 1 area 1
+        end
+write
+!
+!--------------------------------------------------------------------
+!
+! Router R2
+!
+enable
+    configure terminal
+        host R2
+        interface loopback 0
+            ip address 10.10.0.3 255.255.255.248
+            ip ospf 1 area 1
+        router ospf 1
+            router-id 1.1.1.3
+        interface g0/0.4
+            encapsulation dot1q 4
+            ip address 172.16.1.254 255.255.255.0
+            ip ospf 1 area 1
+        interface g0/0.5
+            encapsulation dot1q 5
+            ip address 172.16.2.254 255.255.255.0
+            ip ospf 1 area 1
+        interface g0/0
+            no shutdown
+        interface g0/1
+            ip address 192.168.1.9 255.255.255.252
+            ip ospf 1 area 1
+            no shutdown
+        interface g0/2
+            ip address 192.168.1.6 255.255.255.252
+            ip ospf 1 area 1
+            no shutdown
+        end
+write
+!
+!--------------------------------------------------------------------
+!
+! Router R3
+!
+enable
+    configure terminal
+        host R3
+        interface loopback 0
+            ip address 10.10.0.3 255.255.255.248
+            ip ospf 1 area 1
+        router ospf 1
+            router-id 1.1.1.4
+            passive-interface g0/0
+            passive-interface g0/2
+        interface g0/0
+            ip address 172.16.3.254 255.255.255.0
+            ip ospf 1 area 1
+            no shutdown
+        interface g0/1
+            ip address 192.168.1.10 255.255.255.252
+            ip ospf 1 area 1
+            no shutdown
+        end
+write
+!
+!--------------------------------------------------------------------
+!
+! Switch SW1
+!
+enable
+    configure terminal
+        host SW1
+        vlan 2
+            name 10-0-0-0-24
+        vlan 3
+            name 10-0-1-0-24
+        interface g0/1
+            switchport nonegotiate
+            switchport trunk allowed vlan 2-3
+            switchport mode trunk
+            spanning-tree portfast trunk
+        end
+write
+!
+!--------------------------------------------------------------------
+!
+! Switch SW2
+!
+enable
+    configure terminal
+        host SW2
+        vlan 4
+            name 172-16-1-0-24
+        vlan 5
+            name 172-16-2-0-24
+        interface g0/1
+            switchport nonegotiate
+            switchport trunk allowed vlan 4-5
+            switchport mode trunk
+            spanning-tree portfast trunk
+        end
+write
+
+! Aufgabe 2
+!
+! Router 1
+enable
+    configure terminal
+    host R1-A 
+        interface s1/0
+            ip address 192.186.1.1 255.255.255.252
+            no shutdown
+        router ospf 1
+            router-id 1.1.1.1
+            network 192.186.1.0 0.0.0.3 area 0
+            network 172.16.1.0 0.0.0.255 area 0
+        interface f0/0
+            ip address 172.16.1.254 255.255.255.0
+            no shutdown
+        end
+write
+!--------------------------------------------------------------------
+! Router 2
+enable
+    configure terminal
+    host R2-A 
+        interface s1/0
+            ip address 192.186.1.2 255.255.255.252
+            no shutdown
+        router ospf 1
+            router-id 2.2.2.2
+            network 192.186.1.0 0.0.0.3 area 0
+            network 10.0.0.0 0.0.0.255 area 0
+        interface f0/0
+            ip address 10.0.0.254 255.255.255.0
+            no shutdown
+        end
+write

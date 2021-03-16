@@ -1,0 +1,38 @@
+Auf Router
+
+- Erst Interface (port-channel)
+
+R1(config)#interface
+R1(config)#interface port
+R1(config)#interface port-channel 1
+R1(config-if)#ip add
+R1(config-if)#ip address 192.168.1.254 255.255.255.0
+R1(config-if)#int range g0/0-1
+R1(config-if-range)#channe
+R1(config-if-range)#channel-group 1 (mode on)
+
+
+Auf Switch
+
+Switch(config)#host SW1
+SW1(config)#interfa
+SW1(config)#interface g0/1-2
+                         ^
+% Invalid input detected at '^' marker.
+	
+SW1(config)#interface ra g0/1-2
+SW1(config-if-range)#channel-gr
+SW1(config-if-range)#channel-group 1 mode
+SW1(config-if-range)#channel-group 1 mode on
+SW1(config-if-range)#
+Creating a port-channel interface Port-channel 1
+
+%LINK-5-CHANGED: Interface Port-channel1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface Port-channel1, changed state to up
+
+SW1(config-if-range)#int po1
+SW1(config-if)#
+
+Abhängig ob VLAN konfiguriert sind oder nicht, entweder als switchport access oder trunk
+trunk immer, wennn mehr als VLAN1 besteht.

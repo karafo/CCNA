@@ -1,0 +1,67 @@
+!SW1 config
+
+enable
+configure terminal
+hostname SW1
+!Set up Black-hole-VLAN
+vlan 99
+!Call it Dummy
+name Dummy
+!All ports into black hole
+interface range f0/1-24,g0/1-2
+switchport mode access
+switchport access vlan 99
+!Shutting down all ports
+shutdown
+!Configuring VLAN 10
+interface f0/5
+switchport access vlan 10
+no shutdown
+!Configuring VLAN 20
+interface f0/11
+switchport access vlan 20
+no shutdown
+!Configuring VLAN 30
+interface f0/16
+switchport access vlan 30
+no shutdown
+
+!configure vlan 10
+vlan 10 
+name VLAN-10
+!configure vlan 20
+vlan 20 
+name VLAN-20
+!configure vlan 30
+vlan 30 
+name VLAN-30
+end
+terminal history size 30
+write
+
+!Config SW2
+
+enable 
+configure terminal
+host SW2
+interface range f0/1-2
+switchport mode access
+switchport protected
+end
+write
+
+!Config SW3
+
+enable
+configure terminal
+vlan 10
+name Voice
+vlan 2
+name Data
+interface f0/5
+switchport mode access
+switchport voice vlan 10
+switchport access vlan 2
+
+
+
