@@ -1,4 +1,4 @@
-!SW1 Config
+!SW1 Config .
 enable
 configure terminal
 vtp domain firma.net
