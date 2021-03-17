@@ -106,6 +106,7 @@ enable
         spanning-tree portfast trunk
     exit
         ip default-gateway 172.16.1.254
+        ntp server 192.168.1.1
         logging 10.0.0.253
         logging buffered 10000
         service timestamps log datetime msec
@@ -160,6 +161,7 @@ enable
         dns-server 10.0.0.253
     exit
         logging 10.0.0.253
+        ntp server 192.168.1.1
         logging buffered 10000
         service timestamps log datetime msec
         service timestamps debug datetime msec
@@ -225,6 +227,7 @@ enable
     exit
         ip default-gateway 10.0.1.254
         logging 10.0.0.253
+        ntp server 192.168.1.1
         logging buffered 10000
         service timestamps log datetime msec
         service timestamps debug datetime msec
