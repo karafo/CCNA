@@ -1,13 +1,13 @@
-! Basis-Security
-! R1 und SW1 mit SSH
-! SW2 mit Telnet 
+! Base-Security
+! R1 and SW1 mit SSH
+! SW2 Telnet 
 !
 ! R1 configuration
 !
 enable
     terminal history size 100
     configure terminal
- ! Grundkonfiguration mit Login-Sicherheit für Konsole und SSH
+ ! Configuration with login security for console and SSH
     hostname R1
         username seculog secret password
         service password-encryption
@@ -22,9 +22,11 @@ enable
     crypto key generate rsa general-keys modulus 4096
     ip ssh version 2
     enable secret geheim
- ! Damit ist der Zugriff auf die Konsole grundsätzlich abgesichert
+ ! End security
+  ! Loopback interface
     interface loopback 0
         ip address 1.1.1.1 255.255.255.0
+ ! configuration 172.16.1.0 / 24
     interface g0/0.2
         encapsulation dot1q 2 native
         ip address 172.16.1.254 255.255.255.0
@@ -33,6 +35,7 @@ enable
         ip address 10.0.0.254 255.255.255.0
     interface g0/0
         no shutdown
+ ! Configuration 172.16.2.0 / 24
     interface g0/1.1
         encapsulation dot1q 1
         ip address 172.16.2.254 255.255.255.0
@@ -49,7 +52,7 @@ write
 enable
     terminal history size 100
     configure terminal
-! Grundkonfiguration mit Login-Sicherheit für Konsole und SSH
+ ! Configuration with login security for console and SSH
     hostname SW1
         username seculog secret password
         service password-encryption
@@ -64,22 +67,27 @@ enable
     crypto key generate rsa general-keys modulus 4096
     ip ssh version 2
     enable secret geheim
-! Damit ist der Zugriff auf die Konsole grundsätzlich abgesichert
+ ! End security
+ ! VLAN configuration
     vlan 99
         name Management
     vlan 2
         name Netzwerkzugriff
     vlan 666
         name Sagittarius-A*
+ ! Blackhole Interfaces
     interface range f0/2-24,g0/2
         switchport access vlan 666
         shutdown
+ ! Management VLAN
     interface vlan 99
         ip address 10.0.0.1 255.255.255.0
+ ! Client VLAN
     interface f0/1
         switchport mode access
         switchport access vlan 2
         spanning-tree portfast
+ ! Trunk configuration
     interface g0/1
         switchport mode trunk
         switchport trunk native vlan 2
@@ -88,6 +96,7 @@ enable
         spanning-tree portfast trunk
     exit
         ip default-gateway 172.16.1.254
+ ! End configuration
     end
 write
 !
@@ -96,7 +105,7 @@ write
 enable
     terminal history size 100
     configure terminal
-! Grundkonfiguration mit Login-Sicherheit für Konsole und SSH
+ ! Configuration with login security for console and SSH
     hostname SW2
         username seculog secret password
         service password-encryption
@@ -109,19 +118,23 @@ enable
         login local
         exit
     enable secret geheim
-! Damit ist der Zugriff auf die Konsole grundsätzlich abgesichert
+ ! End security
+ ! VLAN configuration
     vlan 99
         name Management
     vlan 666
         name Sagittarius-A*
+ ! Blackhole Interfaces
     interface range f0/2-24,g0/2
         switchport access vlan 666
         shutdown
+ ! Management VLAN
     interface vlan 99
         ip address 10.0.1.1 255.255.255.0
     interface f0/1
         switchport mode access
         spanning-tree portfast
+ ! Trunk configuration
     interface g0/1
         switchport mode trunk
         switchport trunk native vlan 99
@@ -130,6 +143,7 @@ enable
         spanning-tree portfast trunk
     exit
         ip default-gateway 172.16.2.254
+ ! End configuration
     end
 write
 
