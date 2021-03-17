@@ -1,10 +1,11 @@
-! 2021-03-17 by Ralf Ammann
+! 2021-03-17 by Ralf Ammann 
 ! DNS, DHCP, NTP example configuration (Lession)
 !
 ! Router ISP
 ! NTP-Client from ISP-Server
 ! Master for Router R1
 ! Servers configured manually
+!
 enable
     configure terminal
     hostname ISP
