@@ -1,0 +1,234 @@
+! DNS, DHCP, NTP example configuration (Lession)
+!
+! Router ISP
+! NTP-Client from ISP-Server
+! Master for Router R1
+! Servers configured manually
+enable
+    configure terminal
+    hostname ISP
+    interface g0/1
+        ip address 11.0.0.254 255.255.255.0
+        no shutdown
+    interface g0/2
+        ip address 209.100.100.1 255.255.255.252
+        no shutdown
+    exit
+    ip name-server 11.0.0.253
+    ntp server 11.0.0.253
+    ntp master 3
+    ntp source-interface g0/1
+    exit
+write
+!
+! Router R1 configuration
+!
+enable
+    configure terminal
+    hostname prostetnic
+ ! Loopback and OSPF
+    interface loopback 0
+        ip address 1.1.1.1 255.255.255.0
+    router ospf 1
+        passive-interface g0/0
+        passive-interface g0/2
+ ! Interfaces
+    interface g0/0.2
+        encapsulation dot1q 2 native
+        ip address 172.16.1.254 255.255.255.0
+        ip ospf 1 area 0
+    interface g0/0
+        no shutdown
+    interface g0/1
+        ip address 192.168.1.1 255.255.255.252
+        ip ospf 1 area 0
+        no shutdown
+    interface g0/2
+        ip address 209.100.100.2 255.255.255.252
+        ip ospf 1 area 0
+        no shutdown
+    exit
+ ! Gateway of last resort
+        ip route 0.0.0.0 0.0.0.0 209.100.100.1
+ ! Name-Server NTP-Server
+        ip name-server 10.0.0.253
+        ntp server 209.100.100.1
+        ntp master 4
+        logging 10.0.0.253
+        logging buffered 10000
+        service timestamps log datetime msec
+        service timestamps debug datetime msec
+    exit
+    debug ip icmp
+write
+!
+! Switch 1 configuration
+!
+enable
+    terminal history size 100
+    configure terminal
+ ! Configuration with login security for console and SSH
+    hostname marvin
+        username seculog secret password
+        service password-encryption
+        ip domain-name golgafrinc.ham 
+    line vty 0 4
+        login local
+        transport input ssh 
+        exit
+    line console 0
+        login local
+        exit
+    crypto key generate rsa general-keys modulus 4096
+    ip ssh version 2
+    enable secret geheim
+ ! End security
+ ! VLAN configuration
+    vlan 99
+        name Management
+    vlan 2
+        name Netzwerkzugriff
+    vlan 666
+        name Sagittarius-A*
+ ! Blackhole Interfaces
+    interface range f0/2-24,g0/2
+        switchport access vlan 666
+        shutdown
+ ! SVI
+    interface vlan 2
+        ip address 172.16.1.1 255.255.255.0
+ ! Trunk configuration
+    interface g0/1
+        switchport mode trunk
+        switchport trunk native vlan 2
+        switchport trunk allowed vlan all
+        switchport nonegotiate
+        spanning-tree portfast trunk
+    exit
+        ip default-gateway 172.16.1.254
+        logging 10.0.0.253
+        logging buffered 10000
+        service timestamps log datetime msec
+        service timestamps debug datetime msec
+    exit
+    debug ip icmp
+ ! End configuration
+write
+!
+! Router R2 configuration
+!
+enable
+    configure terminal
+    hostname trillian
+ ! Loopback and OSPF
+    interface loopback 0
+        ip address 1.1.1.2 255.255.255.0
+        ip ospf 1 area 1
+    router ospf 1
+        passive-interface g0/0
+        passive-interface g0/2
+ ! Interfaces
+    interface g0/0.2
+        encapsulation dot1q 2 native
+        ip address 10.0.0.254 255.255.255.0
+        ip ospf 1 area 1
+    interface g0/0.3
+        encapsulation dot1q 3
+        ip address 10.0.1.254 255.255.255.0
+        ip ospf 1 area 1
+    interface g0/0
+        no shutdown
+    interface g0/1
+        ip address 192.168.1.2 255.255.255.252
+        ip ospf 1 area 0
+        no shutdown
+    exit
+ ! Name-Server, DHCP-Server, NTP-Server
+    ip name-server 10.0.0.253
+    ntp server 192.168.1.1
+ ! DHCP configuration
+    ip dhcp excluded-address 10.0.0.245 10.0.0.254
+    ip dhcp excluded-address 10.0.1.245 10.0.0.254
+    ip dhcp pool vlan2
+        network 10.0.0.0 255.255.255.0
+        default-router 10.0.0.254
+        dns-server 10.0.0.253
+    exit
+    ip dhcp pool vlan3
+        network 10.0.1.0 255.255.255.0
+        default-router 10.0.1.254
+        dns-server 10.0.0.253
+    exit
+        logging 10.0.0.253
+        logging buffered 10000
+        service timestamps log datetime msec
+        service timestamps debug datetime msec
+    exit
+    debug ip icmp
+write
+!
+! Switch 2 configuration
+enable
+    terminal history size 100
+    configure terminal
+ ! Configuration with login security for console and SSH
+    hostname trillian
+        username seculog secret password
+        service password-encryption
+        ip domain-name disaster-a.rea 
+    line vty 0 4
+        login local
+        transport input ssh 
+        exit
+    line console 0
+        login local
+        exit
+    crypto key generate rsa general-keys modulus 4096
+    ip ssh version 2
+    enable secret geheim
+ ! End security
+ ! VLAN configuration
+    vlan 2
+        name golgafrinc.ham
+    vlan 3
+        name de.nt
+    vlan 99
+        name Management
+    vlan 666
+        name Sagittarius-A*
+ ! Blackhole Interfaces
+    interface range f0/2-4,f0/6-10,f0/12-24,g0/2
+        switchport access vlan 666
+        shutdown
+ ! Management VLAN
+    interface vlan 2
+        ip address 10.0.0.249 255.255.255.0
+    interface f0/1
+        switchport mode access
+        switchport access vlan 2
+        spanning-tree portfast
+    interface f0/5
+        switchport mode access
+        switchport access vlan 2
+        spanning-tree portfast
+    interface f0/11 
+        switchport mode access
+        switchport access vlan 3
+        spanning-tree portfast
+ ! Trunk configuration
+    interface g0/1
+        switchport mode trunk
+        switchport trunk native vlan 2
+        switchport trunk allowed vlan all
+        switchport nonegotiate
+        spanning-tree portfast trunk
+    exit
+        ip default-gateway 10.0.1.254
+        logging 10.0.0.253
+        logging buffered 10000
+        service timestamps log datetime msec
+        service timestamps debug datetime msec
+    exit
+    debug ip icmp
+ ! End configuration
+write
