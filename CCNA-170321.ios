@@ -32,6 +32,7 @@ enable
     interface loopback 0
         ip address 1.1.1.1 255.255.255.0
     router ospf 1
+        default-information originate
         passive-interface g0/0
         passive-interface g0/2
  ! Interfaces
